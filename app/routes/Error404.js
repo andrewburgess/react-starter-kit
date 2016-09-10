@@ -11,7 +11,7 @@ export default function createRoute(store) {
                 let component = require('../components/Errors/Error404').default;
                 let reducer = require('../ducks/error404').default;
 
-                injectAsyncReducer(store, 'erro404', reducer);
+                injectAsyncReducer(store, 'error404', reducer);
                 cb(null, component);
             });
         }

@@ -1,9 +1,24 @@
+let proto = Object.getPrototypeOf(require);
+!proto.hasOwnProperty("ensure") && Object.defineProperties(proto, {
+    "ensure": {
+        value: function ensure(modules, callback) {
+            callback(this);
+        },
+        writable: false
+    },
+    "include": {
+        value: function include() {},
+        writable: false
+    }
+});
+
 import bodyParser           from 'body-parser';
 import compression          from 'compression';
 import express              from 'express';
 import helmet               from 'helmet';
 import Helmet               from 'react-helmet';
 import hpp                  from 'hpp';
+import morgan               from 'morgan';
 import path                 from 'path';
 import { Provider }         from 'react-redux';
 import React                from 'react';
@@ -36,6 +51,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
     app.use(hpp());
     app.use(compression());
+    app.use(morgan('combined'));
     assets = require(path.join(__dirname, '../', 'assets.json'));
 } else {
     const config = require('../tools/webpack.client.dev');
@@ -46,6 +62,8 @@ if (process.env.NODE_ENV === 'production') {
     let compiler = webpack(config);
     app.use(webpackDevMiddleware(compiler, { quiet: true }));
     app.use(webpackHotMiddleware(compiler, { log: console.log }));
+
+    app.use(morgan('dev'));
 }
 
 app.use(express.static(path.join(__dirname, '../', 'public')));
