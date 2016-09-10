@@ -48,7 +48,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(webpackHotMiddleware(compiler, { log: console.log }));
 }
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../', 'public')));
 
 app.get('*', (req, res) => {
     const store = createStore({

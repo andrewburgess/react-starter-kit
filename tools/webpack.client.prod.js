@@ -23,7 +23,7 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor_[hash].js', 2),
-        new AssetsPlugin({ filename: 'assets.json' }),
+        new AssetsPlugin({ filename: 'dist/assets.json' }),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
