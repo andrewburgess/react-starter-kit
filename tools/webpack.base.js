@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
     CLIENT_ENTRY: path.join(process.cwd(), 'client'),
-    CLIENT_OUTPUT: path.join(process.cwd(), 'dist/public/assets'),
+    CLIENT_DEV_OUTPUT: path.join(process.cwd(), 'public/assets'),
+    CLIENT_PROD_OUTPUT: path.join(process.cwd(), 'dist/public/assets'),
     PUBLIC_PATH: '/assets/',
     VENDOR: [
         'aphrodite',

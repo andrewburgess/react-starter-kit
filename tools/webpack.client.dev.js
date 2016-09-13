@@ -16,10 +16,13 @@ module.exports = {
         filename: '[name].js',
         chunkFilename: '[name].chunk.js',
         publicPath: '/',
-        path: CONFIG.CLIENT_OUTPUT
+        path: CONFIG.CLIENT_DEV_OUTPUT
     },
     module: {
         loaders: [{
+            test: /\.styl$/,
+            loader: 'style-loader!css-loader?modules&camelCase!postcss-loader!stylus-loader'
+        }, {
             test: /\.jsx?$/,
             loader: 'babel',
             exclude: /(node_modules|server)/,

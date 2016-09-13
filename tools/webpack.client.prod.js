@@ -1,5 +1,6 @@
-const AssetsPlugin = require('assets-webpack-plugin');
-const webpack      = require('webpack');
+const AssetsPlugin      = require('assets-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack           = require('webpack');
 
 const CONFIG = require('./webpack.base');
 
@@ -13,7 +14,7 @@ module.exports = {
         filename: '[name]_[chunkhash].js',
         chunkFilename: '[name]_[chunkhash].js',
         publicPath: CONFIG.PUBLIC_PATH,
-        path: CONFIG.CLIENT_OUTPUT
+        path: CONFIG.CLIENT_PROD_OUTPUT
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -23,6 +24,7 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor_[hash].js', 2),
+        new ExtractTextPlugin('styles_[hash].css'),
         new AssetsPlugin({ filename: 'dist/assets.json' }),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
@@ -48,6 +50,12 @@ module.exports = {
                 presets: ['es2015', 'react', 'stage-0', 'react-optimize']
             },
             exclude: /(node_modules)/
+        }, {
+            test: /\.styl$/,
+            loader: ExtractTextPlugin.extract({
+                loader: 'css-loader?modules&camelCase&minimize!postcss-loader!stylus-loader',
+                fallbackLoader: 'style-loader'
+            })
         }]
     }
 };

@@ -23,7 +23,6 @@ import path                 from 'path';
 import { Provider }         from 'react-redux';
 import React                from 'react';
 import ReactDOM             from 'react-dom/server';
-import { StyleSheetServer } from 'aphrodite';
 import { trigger }          from 'redial';
 
 import {
@@ -106,16 +105,13 @@ app.get('*', (req, res) => {
                 </Provider>
             );
 
-            const rendered = StyleSheetServer.renderStatic(() => {
-                return ReactDOM.renderToString(App);
-            });
+            let html = ReactDOM.renderToString(App);
             const head = Helmet.rewind();
 
             res.render('index', {
                 assets,
                 head,
-                html: rendered.html,
-                css: rendered.css,
+                html: html,
                 PROD: process.env.NODE_ENV === 'production',
                 state: JSON.stringify(initialState)
             });

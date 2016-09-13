@@ -7,11 +7,9 @@ html(lang="en")
         | !{head.title}
         | !{head.meta}
         | !{head.link}
-        style(data-aphrodite) !{css.content}
     body
         #app !{html}
         script.
-            window.renderedClassNames = !{JSON.stringify(css.renderedClassNames)};
             window.INITIAL_STATE = !{state};
         script(src=PROD ? assets.vendor.js : '/vendor.js')
         script(src=PROD ? assets.main.js : '/main.js')

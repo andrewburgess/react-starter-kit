@@ -4,14 +4,11 @@ import { Provider }   from 'react-redux';
 import React          from 'react';
 import ReactDOM       from 'react-dom';
 import Router         from 'react-router/lib/Router';
-import { StyleSheet } from 'aphrodite';
 import { trigger }    from 'redial';
 
 import createStore  from '../app/store';
 
 const INITIAL_STATE = window.INITIAL_STATE || {};
-
-StyleSheet.rehydrate(window.renderedClassNames);
 
 const store = createStore(INITIAL_STATE);
 const dispatch = store.dispatch;
