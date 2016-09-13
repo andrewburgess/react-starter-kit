@@ -1,17 +1,3 @@
-let proto = Object.getPrototypeOf(require);
-!proto.hasOwnProperty("ensure") && Object.defineProperties(proto, {
-    "ensure": {
-        value: function ensure(modules, callback) {
-            callback(this);
-        },
-        writable: false
-    },
-    "include": {
-        value: function include() {},
-        writable: false
-    }
-});
-
 import bodyParser           from 'body-parser';
 import compression          from 'compression';
 import express              from 'express';
@@ -31,6 +17,7 @@ import {
     RouterContext
 } from 'react-router';
 
+import indexTemplate from './views/index.pug';
 import createRoutes from '../app/routes';
 import createStore  from '../app/store';
 
@@ -40,8 +27,6 @@ const app = express();
 let assets = {};
 
 app.disable('x-powered-by');
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -51,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(hpp());
     app.use(compression());
     app.use(morgan('combined'));
-    assets = require(path.join(__dirname, '../', 'assets.json'));
+    assets = require('./assets.json');
 } else {
     const config = require('../tools/webpack.client.dev');
     const webpack = require('webpack');
@@ -59,13 +44,13 @@ if (process.env.NODE_ENV === 'production') {
     const webpackHotMiddleware = require('webpack-hot-middleware');
 
     let compiler = webpack(config);
-    app.use(webpackDevMiddleware(compiler, { quiet: true }));
+    app.use(webpackDevMiddleware(compiler));
     app.use(webpackHotMiddleware(compiler, { log: console.log }));
 
     app.use(morgan('dev'));
 }
 
-app.use(express.static(path.join(__dirname, '../', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
     const store = createStore({
@@ -108,13 +93,15 @@ app.get('*', (req, res) => {
             let html = ReactDOM.renderToString(App);
             const head = Helmet.rewind();
 
-            res.render('index', {
+            let rendered = indexTemplate({
                 assets,
                 head,
                 html: html,
                 PROD: process.env.NODE_ENV === 'production',
                 state: JSON.stringify(initialState)
             });
+
+            res.set('Content-Type', 'text/html').send(rendered);
         });
     });
 });

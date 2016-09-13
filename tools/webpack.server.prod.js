@@ -15,6 +15,10 @@ fs.readdirSync('node_modules')
 module.exports = {
     entry: './server/server.js',
     target: 'node',
+    output: {
+        path: path.join(process.cwd(), 'dist'),
+        filename: 'server.js'
+    },
     module: {
         loaders: [{
             test: /\.pug$/,
@@ -35,17 +39,8 @@ module.exports = {
     node: {
         __dirname: false
     },
-    output: {
-        path: path.join(process.cwd(), '.tmp'),
-        filename: 'server.js'
-    },
     plugins: [
-        new webpack.BannerPlugin('require("source-map-support").install();', {
-            raw: true,
-            entryOnly: true,
-            exclude: /\.css$/
-        }),
-        new ExtractTextPlugin('public/style.css')
+        new ExtractTextPlugin('public/assets/styles_[contenthash].css')
     ],
     externals: [
         nodeModules,

@@ -6,7 +6,6 @@ module.exports = {
     CLIENT_PROD_OUTPUT: path.join(process.cwd(), 'dist/public/assets'),
     PUBLIC_PATH: '/assets/',
     VENDOR: [
-        'aphrodite',
         'react-dom',
         'react-redux',
         'react-router',

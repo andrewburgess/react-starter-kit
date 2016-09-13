@@ -1,5 +1,6 @@
 const AssetsPlugin      = require('assets-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path              = require('path');
 const webpack           = require('webpack');
 
 const CONFIG = require('./webpack.base');
@@ -16,6 +17,20 @@ module.exports = {
         publicPath: CONFIG.PUBLIC_PATH,
         path: CONFIG.CLIENT_PROD_OUTPUT
     },
+    module: {
+        loaders: [{
+            test: /\.jsx?$/,
+            loader: 'babel',
+            query: {
+                cacheDirectory: true,
+                presets: ['es2015', 'react', 'stage-0', 'react-optimize']
+            },
+            exclude: /(node_modules)/
+        }, {
+            test: /\.styl$/,
+            loader: ExtractTextPlugin.extract('style', 'css?modules&camelCase&minimize!postcss!stylus')
+        }]
+    },
     plugins: [
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
@@ -24,7 +39,7 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor_[hash].js', 2),
-        new ExtractTextPlugin('styles_[hash].css'),
+        new ExtractTextPlugin('styles_[contenthash].css'),
         new AssetsPlugin({ filename: 'dist/assets.json' }),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
@@ -40,22 +55,5 @@ module.exports = {
             }
         }),
         new webpack.NoErrorsPlugin()
-    ],
-    module: {
-        loaders: [{
-            test: /\.jsx?$/,
-            loader: 'babel',
-            query: {
-                cacheDirectory: true,
-                presets: ['es2015', 'react', 'stage-0', 'react-optimize']
-            },
-            exclude: /(node_modules)/
-        }, {
-            test: /\.styl$/,
-            loader: ExtractTextPlugin.extract({
-                loader: 'css-loader?modules&camelCase&minimize!postcss-loader!stylus-loader',
-                fallbackLoader: 'style-loader'
-            })
-        }]
-    }
+    ]
 };
