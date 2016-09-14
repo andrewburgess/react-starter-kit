@@ -25,7 +25,7 @@ module.exports = {
             loader: 'pug-loader'
         }, {
             test: /\.styl$/,
-            loader: ExtractTextPlugin.extract('style', 'css?modules&camelCase&minimize!postcss!stylus')
+            loader: ExtractTextPlugin.extract('isomorphic-style', 'css?modules&camelCase&minimize!postcss!stylus')
         }, {
             test: /\.jsx?$/,
             loader: 'babel',
@@ -40,7 +40,9 @@ module.exports = {
         __dirname: false
     },
     plugins: [
-        new ExtractTextPlugin('public/assets/styles_[contenthash].css')
+        new ExtractTextPlugin('public/assets/styles_[contenthash].css', {
+            allChunks: true
+        })
     ],
     externals: [
         nodeModules,

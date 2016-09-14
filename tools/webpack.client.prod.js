@@ -39,7 +39,9 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor_[hash].js', 2),
-        new ExtractTextPlugin('styles_[contenthash].css'),
+        new ExtractTextPlugin('styles_[contenthash].css', {
+            allChunks: true
+        }),
         new AssetsPlugin({ filename: 'dist/assets.json' }),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
