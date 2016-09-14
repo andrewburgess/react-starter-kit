@@ -13,6 +13,7 @@ fs.readdirSync('node_modules')
 });
 
 module.exports = {
+    debug: true,
     entry: './server/server.js',
     target: 'node',
     module: {
@@ -21,7 +22,7 @@ module.exports = {
             loader: 'pug-loader'
         }, {
             test: /\.styl$/,
-            loader: ExtractTextPlugin.extract('style', 'css?modules&camelCase&minimize!postcss!stylus')
+            loader: ExtractTextPlugin.extract('isomorphic-style', 'css?modules&camelCase&minimize!postcss!stylus')
         }, {
             test: /\.jsx?$/,
             loader: 'babel',
@@ -45,7 +46,9 @@ module.exports = {
             entryOnly: true,
             exclude: /\.css$/
         }),
-        new ExtractTextPlugin('public/style.css')
+        new ExtractTextPlugin('public/style.css', {
+            allChunks: true
+        })
     ],
     externals: [
         nodeModules,

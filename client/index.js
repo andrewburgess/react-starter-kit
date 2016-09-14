@@ -1,10 +1,11 @@
-import browserHistory from 'react-router/lib/browserHistory';
-import match          from 'react-router/lib/match';
-import { Provider }   from 'react-redux';
-import React          from 'react';
-import ReactDOM       from 'react-dom';
-import Router         from 'react-router/lib/Router';
-import { trigger }    from 'redial';
+import { AppContainer } from 'react-hot-loader';
+import browserHistory   from 'react-router/lib/browserHistory';
+import match            from 'react-router/lib/match';
+import { Provider }     from 'react-redux';
+import React            from 'react';
+import ReactDOM         from 'react-dom';
+import Router           from 'react-router/lib/Router';
+import { trigger }      from 'redial';
 
 import createStore  from '../app/store';
 
@@ -19,9 +20,11 @@ const render = () => {
 
     match({ routes, location }, () => {
         ReactDOM.render(
-            <Provider store={ store }>
-                <Router history={ browserHistory } key={ Math.random() } routes={ routes } />
-            </Provider>,
+            <AppContainer>
+                <Provider store={ store }>
+                    <Router history={ browserHistory } key={ Math.random() } routes={ routes } />
+                </Provider>
+            </AppContainer>,
             document.getElementById('app')
         );
     });

@@ -3,9 +3,11 @@ const webpack = require('webpack');
 const CONFIG = require('./webpack.base');
 
 module.exports = {
+    debug: true,
     devtool: 'eval',
     entry: {
         main: [
+            'react-hot-loader/patch',
             'webpack/hot/only-dev-server',
             'webpack-hot-middleware/client',
             CONFIG.CLIENT_ENTRY
@@ -21,7 +23,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.styl$/,
-            loader: 'style-loader!css-loader?modules&camelCase!postcss-loader!stylus-loader'
+            loader: 'isomorphic-style-loader!css-loader?modules&camelCase!postcss-loader!stylus-loader'
         }, {
             test: /\.jsx?$/,
             loader: 'babel',
