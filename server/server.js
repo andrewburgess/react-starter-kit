@@ -1,15 +1,16 @@
-import bodyParser           from 'body-parser';
-import compression          from 'compression';
-import express              from 'express';
-import helmet               from 'helmet';
-import Helmet               from 'react-helmet';
-import hpp                  from 'hpp';
-import morgan               from 'morgan';
-import path                 from 'path';
-import { Provider }         from 'react-redux';
-import React                from 'react';
-import ReactDOM             from 'react-dom/server';
-import { trigger }          from 'redial';
+import _            from 'lodash';
+import bodyParser   from 'body-parser';
+import compression  from 'compression';
+import express      from 'express';
+import helmet       from 'helmet';
+import Helmet       from 'react-helmet';
+import hpp          from 'hpp';
+import morgan       from 'morgan';
+import path         from 'path';
+import { Provider } from 'react-redux';
+import React        from 'react';
+import ReactDOM     from 'react-dom/server';
+import { trigger }  from 'redial';
 
 import {
     createMemoryHistory,
@@ -83,7 +84,6 @@ app.get('*', (req, res) => {
 
         trigger('fetch', components, locals)
         .then(() => {
-            const initialState = store.getState();
             const App = (
                 <Provider store={ store }>
                     <RouterContext { ...renderProps } />
@@ -91,10 +91,16 @@ app.get('*', (req, res) => {
             );
 
             let html = ReactDOM.renderToString(App);
+
+            const initialState = store.getState();
             const head = Helmet.rewind();
+
+            let css = _.get(initialState, 'app._css', []).join('');
+            delete initialState.app._css;
 
             let rendered = indexTemplate({
                 assets,
+                css,
                 head,
                 html: html,
                 PROD: process.env.NODE_ENV === 'production',
@@ -102,6 +108,10 @@ app.get('*', (req, res) => {
             });
 
             res.set('Content-Type', 'text/html').send(rendered);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send(err);
         });
     });
 });

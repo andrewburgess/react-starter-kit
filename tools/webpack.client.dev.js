@@ -23,7 +23,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.styl$/,
-            loader: 'isomorphic-style-loader!css-loader?modules&camelCase!postcss-loader!stylus-loader'
+            loader: 'isomorphic-style-loader!css-loader?modules&camelCase&sourceMap&localIdentName=[name]_[local]_[hash:base64:4]!postcss-loader!stylus-loader'
         }, {
             test: /\.jsx?$/,
             loader: 'babel',

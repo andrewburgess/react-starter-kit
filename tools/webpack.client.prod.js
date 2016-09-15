@@ -1,7 +1,5 @@
-const AssetsPlugin      = require('assets-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const path              = require('path');
-const webpack           = require('webpack');
+const AssetsPlugin = require('assets-webpack-plugin');
+const webpack      = require('webpack');
 
 const CONFIG = require('./webpack.base');
 
@@ -28,7 +26,7 @@ module.exports = {
             exclude: /(node_modules)/
         }, {
             test: /\.styl$/,
-            loader: ExtractTextPlugin.extract('style', 'css?modules&camelCase&minimize!postcss!stylus')
+            loader: 'isomorphic-style!css?modules&camelCase&minimize!postcss!stylus'
         }]
     },
     plugins: [
@@ -39,9 +37,6 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor_[hash].js', 2),
-        new ExtractTextPlugin('styles_[contenthash].css', {
-            allChunks: true
-        }),
         new AssetsPlugin({ filename: 'dist/assets.json' }),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({

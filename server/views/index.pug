@@ -7,7 +7,7 @@ html(lang="en")
         | !{head.title}
         | !{head.meta}
         | !{head.link}
-        link(href=PROD ? assets.main.css : '/style.css', rel="stylesheet")
+        style !{css}
     body
         #app !{html}
         script.

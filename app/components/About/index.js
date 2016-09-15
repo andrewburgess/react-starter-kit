@@ -1,4 +1,5 @@
-import React from 'react';
+import React      from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import style from './index.styl';
 
@@ -10,4 +11,4 @@ const About = () => {
     );
 };
 
-export default About;
+export default withStyles(style)(About);

@@ -1,7 +1,6 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const fs                = require('fs');
-const path              = require('path');
-const webpack           = require('webpack');
+const fs      = require('fs');
+const path    = require('path');
+const webpack = require('webpack');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
@@ -14,6 +13,7 @@ fs.readdirSync('node_modules')
 
 module.exports = {
     debug: true,
+    devtool: 'inline-source-map',
     entry: './server/server.js',
     target: 'node',
     module: {
@@ -22,7 +22,7 @@ module.exports = {
             loader: 'pug-loader'
         }, {
             test: /\.styl$/,
-            loader: ExtractTextPlugin.extract('isomorphic-style', 'css?modules&camelCase&minimize!postcss!stylus')
+            loader: 'isomorphic-style!css?modules&camelCase&sourceMap&localIdentName=[name]_[local]_[hash:base64:4]!postcss!stylus'
         }, {
             test: /\.jsx?$/,
             loader: 'babel',
@@ -45,9 +45,6 @@ module.exports = {
             raw: true,
             entryOnly: true,
             exclude: /\.css$/
-        }),
-        new ExtractTextPlugin('public/style.css', {
-            allChunks: true
         })
     ],
     externals: [
