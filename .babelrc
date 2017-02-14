@@ -1,8 +1,23 @@
 {
-    "presets": ["es2015", "react", "stage-0"],
+    "presets": [
+        "latest",
+        "react",
+        "stage-0"
+    ],
     "env": {
         "production": {
-            "presets": ["react-optimize"]
+            "only": ["app"],
+            "plugins": [
+                "transform-react-remove-prop-types",
+                "transform-react-constant-elements",
+                "transform-react-inline-elements"
+            ]
+        },
+        "test": {
+            "plugins": [
+                "transform-es2015-modules-commonjs",
+                "dynamic-import-node"
+            ]
         }
     }
 }
