@@ -1,54 +1,29 @@
-import React from 'react';
-import { Route } from 'react-router';
+import App from '../containers/App';
 
-function createAsyncComponent(getComponent) {
-    return class AsyncComponent extends React.Component {
-        static Component = null;
+//import createHomeRoute from './home';
 
-        state = { Component: AsyncComponent.Component };
-
-        componentWillMount() {
-            if (!this.state.Component) {
-                getComponent()
-                .then(Component => {
-                    AsyncComponent.Component = Component;
-                    this.setState({ Component });
-                });
-            }
-        }
-
-        render() {
-            const { Component } = this.state;
-            if (Component) {
-                return <Component { ...this.props } />;
-            }
-
-            return null;
-        }
-    };
+function errorLoading(err) {
+    console.error(`Dynamic page loading failed`, err);
 }
 
-const HomeRoute = createAsyncComponent(() => {
-    return import('../containers/Home')
-    .then((component) => {
-        return component.default;
-    });
-});
+function loadRoute(cb) {
+    return module => cb(null, module.default);
+}
 
-const AboutRoute = createAsyncComponent(() => {
-    return import('../containers/About')
-    .then((component) => {
-        return component.default;
-    });
-});
-
-const Routes = () => {
-    return (
-        <div>
-            <Route exact path="/" component={ HomeRoute } />
-            <Route path="/about" component={ AboutRoute } />
-        </div>
-    );
-};
-
-export default Routes;
+export default function createRoutes() {
+    return {
+        path: '/',
+        component: App,
+        indexRoute: {
+            getComponent(location, cb) {
+                import('../containers/Home').then(loadRoute(cb)).catch(errorLoading);
+            }
+        },
+        childRoutes: [{
+            path: '/about',
+            getComponent(location, cb) {
+                import('../containers/About').then(loadRoute(cb)).catch(errorLoading);
+            }
+        }]
+    };
+}

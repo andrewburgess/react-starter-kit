@@ -3,34 +3,33 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider } from 'react-redux';
-import {
-    BrowserRouter as Router
-} from 'react-router-dom';
+import { Router, browserHistory, match } from 'react-router';
 import { trigger } from 'redial';
 
-import App from './containers/App';
 import configureStore from './store';
+import createRoutes from './routes';
 
 const initialState = window.__INITIAL_STATE__ || {};
 const store = configureStore(initialState);
 
-const render = (Component) => {
-    ReactDOM.render(
-        <AppContainer>
-            <Provider store={ store }>
-                <Router>
-                    <Component />
-                </Router>
-            </Provider>
-        </AppContainer>,
-        document.getElementById('app')
-    );
+const render = (routes) => {
+    const history = browserHistory;
+    match({ routes, history }, (err, redirectLocation, renderProps) => {
+        ReactDOM.render(
+            <AppContainer>
+                <Provider store={ store }>
+                    <Router key={ Math.random() } { ...renderProps } />
+                </Provider>
+            </AppContainer>,
+            document.getElementById('app')
+        );
+    });
 };
 
 if (module.hot) {
-    module.hot.accept('./containers/App', () => {
-        render(require('./containers/App').default);
+    module.hot.accept('./routes', () => {
+        render(require('./routes').default());
     });
 }
 
-render(App);
+render(createRoutes());

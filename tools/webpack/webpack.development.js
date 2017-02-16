@@ -6,6 +6,7 @@ module.exports = {
     entry: {
         main: [
             'react-hot-loader/patch',
+            'webpack/hot/only-dev-server',
             'webpack-hot-middleware/client',
             path.join(process.cwd(), 'app/index.js')
         ],
@@ -16,7 +17,7 @@ module.exports = {
             'react-dom',
             'react-helmet',
             'react-redux',
-            'react-router-dom',
+            'react-router',
             'redial',
             'redux',
             'styled-components'
@@ -36,7 +37,6 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     cacheDirectory: true,
-                    plugins: ['syntax-dynamic-import'],
                     presets: ['latest', 'react', 'stage-0', 'react-hmre']
                 }
             }]
@@ -52,7 +52,7 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
-            filename: 'vendor.js',
+            filename: '[name].js',
             minChunks: 2
         }),
         new webpack.NoEmitOnErrorsPlugin()

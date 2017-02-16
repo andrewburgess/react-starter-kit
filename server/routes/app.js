@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import logger from 'winston';
 import path from 'path';
 import pug from 'pug';
-import { StaticRouter } from 'react-router';
+import { createMemoryHistory, match, RouterContext } from 'react-router';
 import { trigger } from 'redial';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
@@ -13,6 +13,8 @@ import { Provider } from 'react-redux';
 
 import config from '../../config';
 import configureStore from '../../app/store';
+import createRoutes from '../../app/routes';
+
 import App from '../../app/containers/App';
 
 let assets = {
@@ -40,29 +42,39 @@ if (config.get('env') === 'development') {
 router.get('*', (req, res, next) => {
     const store = configureStore({});
     const dispatch = store.dispatch;
+    const history = createMemoryHistory(req.originalUrl);
 
-    const Application = (
-        <AppContainer>
+    const routes = createRoutes();
+
+    match({ routes, history }, (err, redirect, renderProps) => {
+        if (err) {
+            logger.error(err);
+            return next(err);
+        }
+
+        if (!renderProps) {
+            return next();
+        }
+
+        const Application = (
             <Provider store={ store }>
-                <StaticRouter location={ req.originalUrl }>
-                    <App />
-                </StaticRouter>
+                <RouterContext { ...renderProps } />
             </Provider>
-        </AppContainer>
-    );
+        );
 
-    const html = ReactDOM.renderToString(Application);
-    const state = store.getState();
-    const head = Helmet.rewind();
-    const rendered = template({
-        assets,
-        head,
-        html,
-        state: JSON.stringify(state)
+        const html = ReactDOM.renderToString(Application);
+        const state = store.getState();
+        const head = Helmet.rewind();
+        const rendered = template({
+            assets,
+            head,
+            html,
+            state: JSON.stringify(state)
+        });
+
+        res.set('Content-Type', 'text/html').send(rendered);
+
     });
-
-    res.set('Content-Type', 'text/html').send(rendered);
-
     /*match({ routes, history }, (err, redirect, renderProps) => {
         if (err) {
             logger.error(err);
