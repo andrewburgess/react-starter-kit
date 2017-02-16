@@ -76,7 +76,6 @@ router.get('*', (req, res, next) => {
         });
 
         res.set('Content-Type', 'text/html').send(rendered);
-
     });
     /*match({ routes, history }, (err, redirect, renderProps) => {
         if (err) {
