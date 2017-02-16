@@ -16,6 +16,7 @@ module.exports = {
             'react',
             'react-dom',
             'react-helmet',
+            'react-hot-loader',
             'react-redux',
             'react-router',
             'redial',
@@ -49,11 +50,16 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
+        new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             filename: '[name].js',
-            minChunks: 2
+            minChunks: Infinity
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            async: true,
+            children: true
         }),
         new webpack.NoEmitOnErrorsPlugin()
     ]

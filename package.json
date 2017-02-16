@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "analyze": "node ./tools/scripts/analyze.js",
-    "build": "cross-env NODE_ENV=production webpack --config ./tools/webpack/webpack.prod.js --color -p --progress",
+    "build": "cross-env NODE_ENV=production webpack --config ./tools/webpack/webpack.production.js --color -p --progress",
     "build:clean": "rimraf ./build",
     "clean": "npm run build:clean && npm run test:clean",
     "generate": "plop --plopfile ./tools/generators/index.js",
