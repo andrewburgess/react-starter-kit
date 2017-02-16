@@ -1,18 +1,16 @@
 import { applyMiddleware, compose, createStore } from 'redux';
-import { routerMiddleware } from 'react-router-redux';
 
 import createReducer from './reducers';
 
-export default function configureStore(initialState = {}, history) {
+export default function configureStore(initialState = {}) {
     const middlewares = [
-        routerMiddleware(history)
     ];
 
     const enhancers = [
         applyMiddleware(...middlewares)
     ];
 
-    const composedEnhancers = process.env.NODE_ENV !== 'production' &&
+    const composeEnhancers = process.env.NODE_ENV !== 'production' &&
         typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
             window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
 
@@ -26,7 +24,8 @@ export default function configureStore(initialState = {}, history) {
 
     if (module.hot) {
         module.hot.accept('./reducers', () => {
-            import('./reducers').then((reducerModule) => {
+            import('./reducers')
+            .then((reducerModule) => {
                 const createReducers = reducerModule.default;
                 const nextReducers = createReducers(store.asyncReducers);
 
@@ -36,4 +35,13 @@ export default function configureStore(initialState = {}, history) {
     }
 
     return store;
+}
+
+export function injectAsyncReducer(store, name, asyncReducer) {
+    if (store.asyncReducers[name]) {
+        return;
+    }
+
+    store.asyncReducers[name] = asyncReducer;
+    store.replaceReducer(createReducer(store.asyncReducers));
 }

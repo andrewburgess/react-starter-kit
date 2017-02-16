@@ -1,48 +1,60 @@
-const CircularDependencyPlugin = require('circular-dependency-plugin');
-const fs = require('fs');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const plugins = [
-    new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        children: true,
-        minChunks: 2,
-        async: true,
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new HtmlWebpackPlugin({
-        inject: true,
-        templateContent: fs.readFileSync(path.resolve(process.cwd(), 'app/index.html')).toString()
-    }),
-    new CircularDependencyPlugin({
-        exclude: /a\.js|node_modules/,
-        failOnError: false
-    })
-];
-
-module.exports = require('./webpack.base')({
-    entry: [
-        'webpack-hot-middleware/client?reload=true',
-        path.join(process.cwd(), 'app/index.js')
-    ],
-
+module.exports = {
+    devtool: 'cheap-module-source-map',
+    entry: {
+        main: [
+            'react-hot-loader/patch',
+            'webpack-hot-middleware/client',
+            path.join(process.cwd(), 'app/index.js')
+        ],
+        vendor: [
+            'axios',
+            'lodash',
+            'react',
+            'react-dom',
+            'react-helmet',
+            'react-redux',
+            'react-router-dom',
+            'redial',
+            'redux',
+            'styled-components'
+        ]
+    },
     output: {
         filename: '[name].js',
-        chunkFilename: '[name].chunk.js'
+        chunkFilename: '[name].chunk.js',
+        publicPath: '/',
+        path: path.join(process.cwd(), 'app/assets')
     },
-
-    plugins: plugins,
-
-    babelQuery: {
-        presets: ['babel-preset-react-hmre'].map(require.resolve)
+    module: {
+        rules: [{
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'babel-loader',
+                query: {
+                    cacheDirectory: true,
+                    plugins: ['syntax-dynamic-import'],
+                    presets: ['latest', 'react', 'stage-0', 'react-hmre']
+                }
+            }]
+        }, {
+            test: /\.pug$/,
+            use: 'pug-loader'
+        }]
     },
-
-    devtool: 'cheap-module-eval-source-map',
-
-    performance: {
-        hints: false
-    }
-});
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        }),
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            filename: 'vendor.js',
+            minChunks: 2
+        }),
+        new webpack.NoEmitOnErrorsPlugin()
+    ]
+};

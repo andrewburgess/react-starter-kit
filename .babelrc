@@ -1,4 +1,7 @@
 {
+    "plugins": [
+        "dynamic-import-node"
+    ],
     "presets": [
         "latest",
         "react",
@@ -15,8 +18,7 @@
         },
         "test": {
             "plugins": [
-                "transform-es2015-modules-commonjs",
-                "dynamic-import-node"
+                "transform-es2015-modules-commonjs"
             ]
         }
     }

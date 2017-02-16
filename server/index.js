@@ -21,14 +21,16 @@ if (config.get('env') === 'production') {
 // Route to respond to load balancer health checks
 app.get(`/__ping`, (req, res) => { res.set('Content-Type', 'text/plain'); res.send(`pong`); });
 
-app.use(express.static(path.join(__dirname, `../app`)));
+app.use(express.static(path.join(__dirname, `../app/assets`)));
 
 app.use(morgan(config.get(`logger.morgan`), {
     stream: {
-        write: logger.info
+        write: (message) => logger.info(message.replace(/\s$/, ''))
     }
 }));
 
 app.use(require('./routes/app').default);
+
+app.use(require('./routes/error').default);
 
 export default app;
