@@ -38,6 +38,9 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     cacheDirectory: true,
+                    plugins: [
+                        'styled-components'
+                    ],
                     presets: ['latest', 'react', 'stage-0', 'react-hmre']
                 }
             }]

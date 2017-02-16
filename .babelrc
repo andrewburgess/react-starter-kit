@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "dynamic-import-node"
+        "dynamic-import-node",
+        "styled-components"
     ],
     "presets": [
         "latest",

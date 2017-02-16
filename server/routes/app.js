@@ -10,6 +10,7 @@ import { trigger } from 'redial';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import { Provider } from 'react-redux';
+import { styleSheet } from 'styled-components';
 
 import config from '../../config';
 import configureStore from '../../app/store';
@@ -46,6 +47,7 @@ router.get('*', (req, res, next) => {
 
     const routes = createRoutes();
 
+    //styleSheet.reset();
     match({ routes, history }, (err, redirect, renderProps) => {
         if (err) {
             logger.error(err);
@@ -61,15 +63,16 @@ router.get('*', (req, res, next) => {
                 <RouterContext { ...renderProps } />
             </Provider>
         );
-
         const html = ReactDOM.renderToString(Application);
         const state = store.getState();
         const head = Helmet.rewind();
+        const styles = styleSheet.getCSS();
         const rendered = template({
             assets,
             head,
             html,
-            state: JSON.stringify(state)
+            state: JSON.stringify(state),
+            styles
         });
 
         res.set('Content-Type', 'text/html').send(rendered);
