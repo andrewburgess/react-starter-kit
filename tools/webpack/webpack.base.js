@@ -1,71 +1,56 @@
+const _ = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
 
 module.exports = (options) => ({
-    entry: options.entry,
-    output: Object.assign({
-        path: path.resolve(process.cwd(), 'build'),
-        publicPath: '/'
+    devtool: options.devtool,
+
+    entry: _.extend({
+        vendor: [
+            'axios',
+            'lodash',
+            'react',
+            'react-dom',
+            'react-helmet',
+            'react-hot-loader',
+            'react-redux',
+            'react-router',
+            'redial',
+            'redux',
+            'styled-components'
+        ]
+    }, options.entry),
+
+    output: _.extend({
+        filename: '[name].js',
+        chunkFilename: '[name].chunk.js',
+        publicPath: '/',
+        path: path.join(process.cwd(), 'app/assets')
     }, options.output),
+
     module: {
-        loaders: [{
-            test: /\.js$/,
-            loader: 'babel-loader',
+        rules: [{
+            test: /\.jsx?$/,
             exclude: /node_modules/,
-            query: options.babelQuery
-        }, {
-            test: /\.css$/,
-            include: /node_modules/,
-            loaders: ['style-loader', 'css-loader']
-        }, {
-            test: /\.(eot|svg|ttf|woff|woff2)$/,
-            loader: 'file-loader'
-        }, {
-            test: /\.(jpg|png|gif)$/,
-            loaders: [
-                'file-loader', {
-                    loader: 'image-webpack-loader',
-                    query: {
-                        progressive: true,
-                        optimizationLevel: 7,
-                        interlaced: false,
-                        pngquant: {
-                            quality: '65-90',
-                            speed: 4
-                        }
-                    }
+            use: [{
+                loader: 'babel-loader',
+                query: options.babelQuery || {
+                    cacheDirectory: true,
+                    plugins: [
+                        'styled-components'
+                    ],
+                    presets: ['latest', 'react', 'stage-0', 'react-hmre']
                 }
-            ]
-        }, {
-            test: /\.html$/,
-            loader: 'html-loader'
-        }, {
-            test: /\.json$/,
-            loader: 'json-loader'
+            }]
         }]
     },
-    plugins: options.plugins.concat([
+
+    plugins: (options.plugins || []).concat([
         new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            }
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
         new webpack.NamedModulesPlugin()
     ]),
-    resolve: {
-        modules: ['app', 'node_modules'],
-        extensions: [
-            '.js',
-            '.jsx',
-            '.react.js'
-        ],
-        mainFields: [
-            'browser',
-            'jsnext:main',
-            'main'
-        ]
-    },
-    devtool: options.devtool,
-    target: 'web',
+
     performance: options.performance || {}
 });

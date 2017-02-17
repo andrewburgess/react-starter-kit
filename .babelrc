@@ -10,12 +10,7 @@
     ],
     "env": {
         "production": {
-            "only": ["app"],
-            "plugins": [
-                "transform-react-remove-prop-types",
-                "transform-react-constant-elements",
-                "transform-react-inline-elements"
-            ]
+            "presets": ["latest", "react", "stage-0", "react-optimize"]
         },
         "test": {
             "plugins": [

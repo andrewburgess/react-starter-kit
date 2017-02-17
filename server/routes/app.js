@@ -35,8 +35,8 @@ if (config.get('env') === 'development') {
     router.use(webpackDevMiddleware(compiler));
     router.use(webpackHotMiddleware(compiler, { log: logger.debug }));
 } else {
-    if (fs.existsSync(path.join(process.cwd(), 'app/assets/assets.json'))) {
-        assets = require(path.join(process.cwd(), 'app/assets/assets.json'));
+    if (fs.existsSync(path.join(process.cwd(), 'app/assets.json'))) {
+        assets = require(path.join(process.cwd(), 'app/assets.json'));
     }
 }
 
