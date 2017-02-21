@@ -6,7 +6,7 @@ module.exports = require('./webpack.base')({
     devtool: false,
 
     entry: {
-        main: [path.join(process.cwd(), 'build/app/index.js')]
+        main: [path.join(process.cwd(), 'app/index.js')]
     },
 
     output: {
@@ -17,19 +17,26 @@ module.exports = require('./webpack.base')({
     },
 
     babelQuery: {
+        babelrc: false,
         cacheDirectory: true,
         plugins: [
-            'styled-components'
+            ['styled-components', { 'ssr': true }]
         ],
-        presets: ['latest', 'react', 'stage-0', 'react-optimize']
+        presets: [['latest', { 'es2015': { 'modules': false } }], 'react', 'stage-0', 'react-optimize']
     },
 
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.AggressiveMergingPlugin(),
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false
+        }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: Infinity
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            async: true,
+            children: true
         }),
         new AssetsPlugin({
             filename: 'assets.json',

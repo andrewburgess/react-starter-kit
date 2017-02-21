@@ -35,6 +35,7 @@ module.exports = (options) => ({
             use: [{
                 loader: 'babel-loader',
                 query: options.babelQuery || {
+                    babelrc: false,
                     cacheDirectory: true,
                     plugins: [
                         'styled-components'
