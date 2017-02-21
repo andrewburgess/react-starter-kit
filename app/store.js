@@ -1,25 +1,36 @@
-import {
-    applyMiddleware,
-    compose,
-    createStore
-}                    from 'redux';
-import thunk         from 'redux-thunk';
+import { applyMiddleware, compose, createStore } from 'redux';
 
-import createReducers from './reducers';
+import createReducer from './reducers';
 
-export default function (initialState) {
-    let store = createStore(createReducers(), initialState, compose(
-        applyMiddleware(thunk),
-        process.env.NODE_ENV === 'development' && typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ?
-            window.devToolsExtension() :
-            f => f
-    ));
+export default function configureStore(initialState = {}) {
+    const middlewares = [
+    ];
+
+    const enhancers = [
+        applyMiddleware(...middlewares)
+    ];
+
+    const composeEnhancers = process.env.NODE_ENV !== 'production' &&
+        typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+            window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
+
+    const store = createStore(
+        createReducer(),
+        initialState,
+        composeEnhancers(...enhancers)
+    );
 
     store.asyncReducers = {};
 
-    if (process.env.NODE_ENV === 'development' && module.hot) {
+    if (module.hot) {
         module.hot.accept('./reducers', () => {
-            store.replaceReducer(require('./reducers').default);
+            import('./reducers')
+            .then((reducerModule) => {
+                const createReducers = reducerModule.default;
+                const nextReducers = createReducers(store.asyncReducers);
+
+                store.replaceReducer(nextReducers);
+            });
         });
     }
 
@@ -27,6 +38,10 @@ export default function (initialState) {
 }
 
 export function injectAsyncReducer(store, name, asyncReducer) {
+    if (store.asyncReducers[name]) {
+        return;
+    }
+
     store.asyncReducers[name] = asyncReducer;
-    store.replaceReducer(createReducers(store.asyncReducers));
+    store.replaceReducer(createReducer(store.asyncReducers));
 }

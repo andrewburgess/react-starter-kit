@@ -1,28 +1,15 @@
-import React from 'react';
-import {
-    IndexRoute,
-    Redirect,
-    Route
-} from 'react-router';
+import App from '../containers/App';
 
-import App      from '../components/App';
-import Error404 from '../components/Errors/Error404';
-import Home     from './Home';
+import home from './home';
+import about from './about';
 
-export default function createRoutes(store) {
-    const getChildRoutes = (location, cb) => {
-        require.ensure([], (require) => {
-            cb(null, [
-                require('./About').default(store),
-                <Route component={ Error404 } path="404" />,
-                <Redirect from="*" to="/404" />
-            ]);
-        });
+export default function createRoutes() {
+    return {
+        path: '/',
+        component: App,
+        indexRoute: home(),
+        childRoutes: [
+            about()
+        ]
     };
-
-    return (
-        <Route component={ App } getChildRoutes={ getChildRoutes } path="/">
-            <IndexRoute component={ Home } />
-        </Route>
-    );
 }

@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux';
 
-import appReducer from './ducks/app';
-
-export default function (asyncReducers) {
+export default function createReducer(asyncReducers) {
     return combineReducers({
-        app: appReducer,
+        app: (state = {}) => state,
         ...asyncReducers
     });
 }
